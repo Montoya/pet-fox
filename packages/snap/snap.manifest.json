@@ -7,7 +7,7 @@
     "url": "https://github.com/Montoya/pet-fox.git"
   },
   "source": {
-    "shasum": "usoZPr0F4J12BaVbuDQRCCIW2cj/N5gZD7ccOJfDZV8=",
+    "shasum": "m5xum7Gm0KicRhfQXs0pYga73SiZ1y8s4d4Kl/DU2aM=",
     "location": {
       "npm": {
         "filePath": "dist/bundle.js",
@@ -18,6 +18,17 @@
     }
   },
   "initialPermissions": {
+    "endowment:cronjob": {
+      "jobs": [
+        {
+          "expression": "* * * * *",
+          "request": {
+            "method": "fireCronjob"
+          }
+        }
+      ]
+    },
+    "snap_manageState": {},
     "snap_dialog": {},
     "endowment:rpc": {
       "dapps": true,
