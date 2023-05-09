@@ -3,22 +3,84 @@ import { heading, panel, text } from '@metamask/snaps-ui';
 
 const Fox = {
   birth: 0, // should be epoch time 
-  age: 0,
-  health: 100, // range: 0 to 100
-  hunger: 50, // range: 0 to 100
-  happiness: 50, // range: 0 to 100
-  name: "", 
-  stamp: 0 // should be epoch time 
+  age: 0, // based on epoch time too 
+  health: 100.0, // range: 0 to 100
+  hunger: 50.0, // range: 0 to 100
+  happiness: 50.0, // range: 0 to 100
+  name: "Fox", 
+  stamp: 0, // should be epoch time 
+  lastNotify: 0, // also epoch time 
 };
 
-const foxBirth = function(name:String) { 
-  let myFox = Object.create(Fox); 
-  myFox.birth =  myFox.stamp = Date.now(); 
+const foxBirth = function(name:string) { 
+  let myFox = Object.assign({}, Fox); 
+  myFox.birth = myFox.stamp = Date.now(); 
   myFox.name = name; 
   return myFox; 
 }
 
-const foxSave = async function(fox:Object) { 
+const foxUpdate = async function(fox:typeof Fox) { // pass by reference 
+  // take a fox and update it based on how much time has elapsed 
+  // then update the stamp 
+  // first, get the current epoch time
+  const rightNow = Date.now(); 
+  // then, get how much time has elapsed
+  const elapsedTime = rightNow - fox.stamp; 
+  // the age of the fox should increase 
+  fox.age += elapsedTime; 
+  // the fox's hunger should decrease (which is kind of counter intuitive because it's getting more hungry) by 0.00000069 each millisecond
+  fox.hunger -= (0.00000069 * elapsedTime); 
+  if(fox.hunger < 0) { fox.hunger = 0.0; } // bounds check 
+  // now if the hunger is under 15 then the health should start to decrease at a quicker rate 
+  if(fox.hunger < 15) { 
+    fox.health -= (0.000000926 * elapsedTime); 
+  }
+  if(fox.health < 0) { fox.health = 0; } // bounds check, but also... death
+  let hpyMod = 1; if(fox.health < 33) { hpyMod = 3; } else if (fox.health < 66) { hpyMod = 2; }
+  fox.happiness -= (0.000000425 * hpyMod * elapsedTime); 
+  if(fox.happiness < 0) { fox.happiness = 0; } // bounds check, but also... wow. sad. 
+  fox.stamp = rightNow; 
+}
+
+const foxNotify = async function(fox:typeof Fox) { // pass by reference 
+  const rightNow = Date.now(); 
+  // should send notifications based on current state, once every hour at most...
+  const elapsedNotifyTime = rightNow - fox.lastNotify; 
+  if(elapsedNotifyTime > 3599999) { // 1 hour 
+    if(fox.health < 33) { 
+      await snap.request({
+        method: 'snap_notify',
+        params: {
+          type: 'inApp',
+          message: 'Your pet fox is sick and needs attention soon!',
+        },
+      });
+      fox.lastNotify = rightNow; 
+    }
+    else if(fox.hunger < 25) { 
+      await snap.request({
+        method: 'snap_notify',
+        params: {
+          type: 'inApp',
+          message: 'Your pet fox is hungry and needs to be fed!',
+        },
+      });
+      fox.lastNotify = rightNow; 
+    }
+    else if(fox.happiness < 33) { 
+      await snap.request({
+        method: 'snap_notify',
+        params: {
+          type: 'inApp',
+          message: 'Your pet fox is sad and misses you!',
+        },
+      });
+      fox.lastNotify = rightNow; 
+    }
+  }
+}
+
+const foxSave = async function(fox:typeof Fox) { 
   let state = { petFox: fox }; 
   await snap.request({ 
     method: 'snap_manageState', 
@@ -30,7 +92,7 @@ const foxCall = async function() {
   let state = (await snap.request({
     method: 'snap_manageState',
     params: { operation: 'get' },
-  })) as { petFox: Object } | null;
+  }));
 
   if (!state) {
     state = { petFox: foxBirth('Foxy') };
@@ -41,10 +103,28 @@ const foxCall = async function() {
     });
   }
 
-  return state.petFox; 
+  return state.petFox as typeof Fox; 
 }
 
-const humanReadableDate = function(timestamp) { 
+const periodicUpdate = async function() { // for cronjob 
+  // get the fox 
+  let fox = await foxCall(); 
+  console.log(fox); 
+  await foxUpdate(fox); 
+  await foxNotify(fox); 
+  console.log(fox); 
+  await foxSave(fox); 
+}
+
+const manualUpdate = async function() { // for dapp 
+  // get the fox 
+  let fox = await foxCall(); 
+  await foxUpdate(fox); 
+  await foxSave(fox); 
+  return fox; 
+}
+
+const humanReadableDate = function(timestamp:number) { 
   const date = new Date(timestamp);
   const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
   const month = monthNames[date.getMonth()];
@@ -60,7 +140,7 @@ const humanReadableDate = function(timestamp) {
 export const onCronjob: OnCronjobHandler = async ({ request }) => {
   switch (request.method) {
     case 'fireCronjob':
-      console.log("Fired cronjob at: "+humanReadableDate(Date.now())); 
+      await periodicUpdate(); 
       break; 
     default:
       throw new Error('Method not found.');
@@ -79,6 +159,8 @@ export const onCronjob: OnCronjobHandler = async ({ request }) => {
  */
 export const onRpcRequest: OnRpcRequestHandler = async ({ origin, request }) => {
   switch (request.method) {
+    case 'update': 
+      return await manualUpdate(); 
     case 'hello':
       const input = await snap.request({
         method: 'snap_dialog',
@@ -90,7 +172,7 @@ export const onRpcRequest: OnRpcRequestHandler = async ({ origin, request }) => 
           ]),
         },
       });
-      const name = input ? input.trim() : 'Fox'; 
+      const name = input && typeof input == 'string' ? input.trim() : 'Fox'; 
       const myFox = foxBirth(name); 
       foxSave(myFox); 
       const birthdate = humanReadableDate(myFox.birth); 
