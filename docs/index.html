@@ -110,12 +110,18 @@ a.btn {
         </a>
       </div>
       <div id="snapInstalled" style="display:none">
-        <p>Woot!</p>
+        <p id="petFox">&nbsp;</p>
+        <div id="buttons">
+          <button id="feed">FEED</button> &nbsp; <button id="pet">PET</button>
+        </div>
       </div>
     </div>
     <!--Content ends-->
 
     <script type="text/javascript">
+
+const snapId = 'local:http://localhost:8080'; 
+
 const isFlask = async () => {
   const provider = window.ethereum;
 
@@ -140,7 +146,7 @@ const getSnap = async () => {
 
     return Object.values(snaps).find(
       (snap) =>
-        snap.id === 'local:http://localhost:8080'
+        snap.id === snapId
     );
   } catch (e) {
     console.log('Failed to obtain installed snap', e);
@@ -152,26 +158,68 @@ const connectSnap = async (event) => {
   event.preventDefault(); 
   const provider = window.ethereum; 
 
-  try { 
+  try { /*
     await provider?.request({
       method: 'wallet_requestSnaps', 
       params: 
         {
-          ['local:http://localhost:8080']: { }
+          [snapId]: { }
         },
-    }); 
+    }); */
 
     const installedSnap = await getSnap();
 
     if(installedSnap) { 
       document.getElementById('installSnap').style.display = 'none'; 
       document.getElementById('snapInstalled').style.display = 'block'; 
+      document.getElementById('feed').addEventListener('click',foxFeed); 
+      document.getElementById('pet').addEventListener('click',foxPet); 
+      run(); 
+      setInterval(run, 1000); 
     }
   } catch { 
 
   }
   return false; 
 }; 
+
+const run = function() { 
+  ethereum.request({
+    method: 'wallet_invokeSnap',
+    params: { 
+      snapId: snapId, 
+      request: { 
+        method: 'update', 
+      }
+    } 
+  }).then(function (fox) { 
+    document.getElementById('petFox').textContent = JSON.stringify(fox); 
+  }); 
+}
+
+const foxFeed = function() { 
+  ethereum.request({
+    method: 'wallet_invokeSnap',
+    params: { 
+      snapId: snapId, 
+      request: { 
+        method: 'feed', 
+      }
+    } 
+  }); 
+}
+
+const foxPet = function() { 
+  ethereum.request({
+    method: 'wallet_invokeSnap',
+    params: { 
+      snapId: snapId, 
+      request: { 
+        method: 'pet', 
+      }
+    } 
+  }); 
+}
 
 window.onload = async (event) => {
   const isFlaskDetected = await isFlask(); 

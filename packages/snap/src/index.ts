@@ -106,6 +106,24 @@ const foxCall = async function() {
   return state.petFox as typeof Fox; 
 }
 
+const foxFeed = async function() { 
+  // get the fox 
+  let fox = await foxCall(); 
+  fox.hunger += 40; 
+  if(fox.hunger > 100) { fox.hunger = 100.0; }
+  await foxSave(fox); 
+  return fox; 
+}
+
+const foxPet = async function() { 
+  // get the fox 
+  let fox = await foxCall(); 
+  fox.happiness += 20; 
+  if(fox.happiness > 100) { fox.happiness = 100.0; }
+  await foxSave(fox); 
+  return fox; 
+}
+
 const periodicUpdate = async function() { // for cronjob 
   // get the fox 
   let fox = await foxCall(); 
@@ -161,6 +179,10 @@ export const onRpcRequest: OnRpcRequestHandler = async ({ origin, request }) => 
   switch (request.method) {
     case 'update': 
       return await manualUpdate(); 
+    case 'feed':
+      return await foxFeed(); 
+    case 'pet': 
+      return await foxPet()
     case 'hello':
       const input = await snap.request({
         method: 'snap_dialog',
