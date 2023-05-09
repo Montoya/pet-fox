@@ -60,7 +60,8 @@ const humanReadableDate = function(timestamp) {
 export const onCronjob: OnCronjobHandler = async ({ request }) => {
   switch (request.method) {
     case 'fireCronjob':
-      return true; 
+      console.log("Fired cronjob at: "+humanReadableDate(Date.now())); 
+      break; 
     default:
       throw new Error('Method not found.');
   }
