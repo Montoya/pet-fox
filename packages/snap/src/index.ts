@@ -36,6 +36,9 @@ const foxUpdate = async function(fox:typeof Fox) { // pass by reference
     fox.health -= (0.000000926 * elapsedTime); 
   }
   if(fox.health < 0) { fox.health = 0; } // bounds check, but also... death
+  
+  // might not use health, might just end the fox when hunger is 0... 
+
   let hpyMod = 1; if(fox.health < 33) { hpyMod = 3; } else if (fox.health < 66) { hpyMod = 2; }
   fox.happiness -= (0.000000425 * hpyMod * elapsedTime); 
   if(fox.happiness < 0) { fox.happiness = 0; } // bounds check, but also... wow. sad. 

@@ -2,7 +2,7 @@
 <html>
   <head>
     <title>Pet Fox</title>
-    <!-- link rel="icon" type="image/svg" href="./icon.svg"/ -->
+    <link rel="icon" type="image/svg" href="./fox.svg"/>
     <style type="text/css">
 
 body {
@@ -158,14 +158,14 @@ const connectSnap = async (event) => {
   event.preventDefault(); 
   const provider = window.ethereum; 
 
-  try { /*
+  try { 
     await provider?.request({
       method: 'wallet_requestSnaps', 
       params: 
         {
           [snapId]: { }
         },
-    }); */
+    }); 
 
     const installedSnap = await getSnap();
 
