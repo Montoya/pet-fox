@@ -36,7 +36,7 @@ const foxUpdate = async function(fox:typeof Fox) { // pass by reference
     fox.health -= (0.000000926 * elapsedTime); 
   }
   if(fox.health < 0) { fox.health = 0; } // bounds check, but also... death
-  
+
   // might not use health, might just end the fox when hunger is 0... 
 
   let hpyMod = 1; if(fox.health < 33) { hpyMod = 3; } else if (fox.health < 66) { hpyMod = 2; }
@@ -127,6 +127,16 @@ const foxPet = async function() {
   return fox; 
 }
 
+const foxHeal = async function() { 
+  // get the fox 
+  let fox = await foxCall(); 
+  if(fox.hunger >= 20) { // no medicine on an empty stomach!
+    fox.health = 100.0; // make this one simple 
+  }
+  await foxSave(fox); 
+  return fox; 
+}
+
 const periodicUpdate = async function() { // for cronjob 
   // get the fox 
   let fox = await foxCall(); 
@@ -185,7 +195,9 @@ export const onRpcRequest: OnRpcRequestHandler = async ({ origin, request }) => 
     case 'feed':
       return await foxFeed(); 
     case 'pet': 
-      return await foxPet()
+      return await foxPet(); 
+    case 'heal': 
+      return await foxHeal(); 
     case 'hello':
       const input = await snap.request({
         method: 'snap_dialog',
