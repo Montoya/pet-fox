@@ -1,5 +1,5 @@
 {
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Everyone wants a pet fox.",
   "proposedName": "Pet Fox",
   "repository": {
@@ -7,7 +7,7 @@
     "url": "https://github.com/Montoya/pet-fox.git"
   },
   "source": {
-    "shasum": "dDFfL2aBywCQEKfAQmNVF+E73oHudfiDIKCaCzsxXBo=",
+    "shasum": "YBxBnn05YOIEZA4zCAllOKqcOu9ZcfobHuimDbMeylg=",
     "location": {
       "npm": {
         "filePath": "dist/bundle.js",

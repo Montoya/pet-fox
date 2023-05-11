@@ -70,6 +70,10 @@ a.btn {
   max-width:768px; 
 }
 
+#petFox { 
+  word-wrap: break-word;
+}
+
 /*Shrinking for mobile*/
 @media (max-width: 768px) {
   .waves {
@@ -120,7 +124,10 @@ a.btn {
 
     <script type="text/javascript">
 
-const snapId = 'local:http://localhost:8080'; 
+var snapId = 'npm:pet-fox'; 
+if ( ["localhost", "127.0.0.1", ""].includes(window.location.hostname) ) {
+  snapId = 'local:http://localhost:8080';
+}
 
 const isFlask = async () => {
   const provider = window.ethereum;

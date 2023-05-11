@@ -9,13 +9,15 @@ const Fox = {
   happiness: 50.0, // range: 0 to 100
   name: "Fox", 
   stamp: 0, // should be epoch time 
-  lastNotify: 0, // also epoch time 
+  lastNotify: 0, // also epoch time
+  updateModifier: 1, 
 };
 
 const foxBirth = function(name:string) { 
   let myFox = Object.assign({}, Fox); 
   myFox.birth = myFox.stamp = Date.now(); 
   myFox.name = name; 
+  if(name==="Max Pain") { myFox.updateModifier = 500; }
   return myFox; 
 }
 
@@ -29,18 +31,18 @@ const foxUpdate = async function(fox:typeof Fox) { // pass by reference
   // the age of the fox should increase 
   fox.age += elapsedTime; 
   // the fox's hunger should decrease (which is kind of counter intuitive because it's getting more hungry) by 0.00000069 each millisecond
-  fox.hunger -= (0.00000069 * elapsedTime); 
+  fox.hunger -= (0.00000069 * elapsedTime * fox.updateModifier); 
   if(fox.hunger < 0) { fox.hunger = 0.0; } // bounds check 
   // now if the hunger is under 15 then the health should start to decrease at a quicker rate 
   if(fox.hunger < 15) { 
-    fox.health -= (0.000000926 * elapsedTime); 
+    fox.health -= (0.000000926 * elapsedTime * fox.updateModifier); 
   }
   if(fox.health < 0) { fox.health = 0; } // bounds check, but also... death
 
   // might not use health, might just end the fox when hunger is 0... 
 
   let hpyMod = 1; if(fox.health < 33) { hpyMod = 3; } else if (fox.health < 66) { hpyMod = 2; }
-  fox.happiness -= (0.000000425 * hpyMod * elapsedTime); 
+  fox.happiness -= (0.000000425 * hpyMod * elapsedTime  * fox.updateModifier); 
   if(fox.happiness < 0) { fox.happiness = 0; } // bounds check, but also... wow. sad. 
   fox.stamp = rightNow; 
 }

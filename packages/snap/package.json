@@ -1,7 +1,6 @@
 {
   "name": "pet-fox",
-  "version": "0.1.1",
-  "private": true,
+  "version": "0.1.2",
   "description": "Everyone wants a pet fox",
   "repository": {
     "type": "git",
