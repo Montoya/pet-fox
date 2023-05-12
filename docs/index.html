@@ -154,10 +154,10 @@ const getSnap = async () => {
       method: 'wallet_getSnaps',
     }); 
 
-    return Object.values(snaps).find(
+    return undefined; /* Object.values(snaps).find(
       (snap) =>
         snap.id === snapId
-    );
+    ); */
   } catch (e) {
     console.log('Failed to obtain installed snap', e);
     return undefined;
