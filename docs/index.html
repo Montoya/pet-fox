@@ -154,15 +154,16 @@ const getSnap = async () => {
       method: 'wallet_getSnaps',
     }); 
 
-    return undefined; /* Object.values(snaps).find(
+    return Object.values(snaps).find(
       (snap) =>
         snap.id === snapId
-    ); */
+    ); 
   } catch (e) {
     console.log('Failed to obtain installed snap', e);
     return undefined;
   }
 };
+
 
 const connectSnap = async (event) => {
   event.preventDefault(); 
@@ -173,7 +174,7 @@ const connectSnap = async (event) => {
       method: 'wallet_requestSnaps', 
       params: 
         {
-          [snapId]: { }
+          [snapId]: { version: 'latest' }
         },
     }); 
 
