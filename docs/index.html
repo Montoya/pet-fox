@@ -128,8 +128,12 @@ a.btn {
     <script type="text/javascript">
 
 var snapId = 'npm:pet-fox'; 
+var snapVersion = ''; 
 if ( ["localhost", "127.0.0.1", ""].includes(window.location.hostname) ) {
   snapId = 'local:http://localhost:8080';
+}
+else { 
+  snapVersion = '^0.1.3'; 
 }
 
 const isFlask = async () => {
@@ -174,7 +178,7 @@ const connectSnap = async (event) => {
       method: 'wallet_requestSnaps', 
       params: 
         {
-          [snapId]: { version: 'latest' }
+          [snapId]: { version: snapVersion }
         },
     }); 
 
