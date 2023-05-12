@@ -74,33 +74,33 @@ const foxNotify = async function(fox:typeof Fox) { // pass by reference
   const rightNow = Date.now(); 
   // should send notifications based on current state, once every hour at most...
   const elapsedNotifyTime = rightNow - fox.lastNotify; 
-  if(elapsedNotifyTime > 3599999) { // 1 hour 
-    if(fox.health < 33) { 
-      await snap.request({
-        method: 'snap_notify',
-        params: {
-          type: 'inApp',
-          message: 'Your pet fox is sick and needs attention soon!',
-        },
-      });
-      fox.lastNotify = rightNow; 
+  if(elapsedNotifyTime > (3599999 / fox.updateModifier)) { // 1 hour 
+    let message = ''; 
+    if(fox.health < 50) { 
+      message = 'Your pet fox is sick and needs attention soon!'; 
     }
     else if(fox.hunger < 25) { 
+      message = 'Your pet fox is hungry and needs to be fed!'; 
+    }
+    else if(fox.happiness < 24) { 
+      message = 'Your pet fox is sad and misses you!'; 
+    }
+    else if(fox.dirty >= 1) { 
+      message = 'Your pet fox needs its habitat cleaned!';
+    }
+    if(message.length > 0) { 
       await snap.request({
         method: 'snap_notify',
         params: {
           type: 'inApp',
-          message: 'Your pet fox is hungry and needs to be fed!',
+          message: message,
         },
       });
-      fox.lastNotify = rightNow; 
-    }
-    else if(fox.happiness < 33) { 
       await snap.request({
         method: 'snap_notify',
         params: {
-          type: 'inApp',
-          message: 'Your pet fox is sad and misses you!',
+          type: 'native',
+          message: message,
         },
       });
       fox.lastNotify = rightNow; 
