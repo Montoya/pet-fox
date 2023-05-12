@@ -3,6 +3,7 @@
   <head>
     <title>Pet Fox</title>
     <link rel="icon" type="image/svg" href="./fox.svg"/>
+    <script src="https://unpkg.com/compare-versions/lib/umd/index.js"></script>
     <style type="text/css">
 
 body {
@@ -127,13 +128,15 @@ a.btn {
 
     <script type="text/javascript">
 
+const { compareVersions, compare, satisfies, validate } = window.compareVersions; 
+
 var snapId = 'npm:pet-fox'; 
-var snapVersion = ''; 
+var snapVersion = '^0'; 
 if ( ["localhost", "127.0.0.1", ""].includes(window.location.hostname) ) {
   snapId = 'local:http://localhost:8080';
 }
 else { 
-  snapVersion = '^0.1.3'; 
+  snapVersion = '^0.1.4'; 
 }
 
 const isFlask = async () => {
@@ -159,8 +162,8 @@ const getSnap = async () => {
     }); 
 
     return Object.values(snaps).find(
-      (snap) =>
-        snap.id === snapId
+      (snap) => 
+        snap.id === snapId && satisfies(snap.version, snapVersion)
     ); 
   } catch (e) {
     console.log('Failed to obtain installed snap', e);

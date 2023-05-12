@@ -123,7 +123,7 @@ const foxCall = async function() {
   }));
 
   if (!state) {
-    state = { petFox: foxBirth('Foxy') };
+    state = { petFox: foxBirth('Fox') };
     // initialize state if empty and set default data
     await snap.request({
       method: 'snap_manageState',
