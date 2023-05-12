@@ -16,8 +16,8 @@ p {
 a.btn { 
   color:#fff; 
   display:inline-block; 
-  background-color:rgb(84,58,183); 
-  background: linear-gradient(0deg, rgb(66, 58, 183) 0%, rgb(0, 129, 193) 100%);
+  background-color:rgb(103, 98, 235); 
+  background: linear-gradient(rgb(138, 66, 173) 0%, rgb(103, 98, 235) 100%); 
   padding:12px; 
   border-radius:6px; 
   text-decoration:none;
@@ -26,7 +26,7 @@ a.btn {
 .header {
   position:relative;
   text-align:center;
-  background: linear-gradient(60deg, rgb(58, 73, 183) 0%, rgb(0, 148, 193) 100%);
+  background: linear-gradient(rgb(138, 66, 173) 0%, rgb(103, 98, 235) 100%); 
   color:white;
 }
 .logo {
@@ -37,7 +37,7 @@ a.btn {
 }
 
 .inner-header {
-  height:40vh;
+  height:6em;
   width:100%;
   margin: 0;
   padding: 0;
@@ -60,8 +60,6 @@ a.btn {
 }
 
 .content {
-  position:relative;
-  height:20vh;
   text-align:center;
   background-color: #fff;
   padding-top:32px; 
@@ -115,9 +113,14 @@ a.btn {
       </div>
       <div id="snapInstalled" style="display:none">
         <p id="petFox">&nbsp;</p>
-        <div id="buttons">
-          <button id="feed">FEED</button> &nbsp; <button id="pet">PET</button>
-        </div>
+        <p id="buttons">
+          <button id="feed">FEED</button> &nbsp; 
+          <button id="pet">PET</button> &nbsp; 
+          <button id="heal">HEAL</button> &nbsp; 
+          <button id="clean">CLEAN</button> &nbsp; 
+          <button id="ask">ASK</button> &nbsp; 
+          <button id="adopt">ADOPT</button>
+        </p>
       </div>
     </div>
     <!--Content ends-->
@@ -181,6 +184,10 @@ const connectSnap = async (event) => {
       document.getElementById('snapInstalled').style.display = 'block'; 
       document.getElementById('feed').addEventListener('click',foxFeed); 
       document.getElementById('pet').addEventListener('click',foxPet); 
+      document.getElementById('clean').addEventListener('click',foxClean); 
+      document.getElementById('heal').addEventListener('click',foxHeal); 
+      document.getElementById('ask').addEventListener('click',foxAsk); 
+      document.getElementById('adopt').addEventListener('click',foxBirth); 
       run(); 
       setInterval(run, 1000); 
     }
@@ -200,7 +207,27 @@ const run = function() {
       }
     } 
   }).then(function (fox) { 
-    document.getElementById('petFox').textContent = JSON.stringify(fox); 
+    const container = document.getElementById('petFox'); 
+    container.textContent = ''; 
+    let p = document.createElement('p'); 
+    p.textContent = `Name: ${fox.name}`; 
+    container.appendChild(p); 
+    const age = parseInt(parseInt(fox.age) / (1000*3600*24)); 
+    p = document.createElement('p'); 
+    p.textContent = `Age: ${age} days`; 
+    container.appendChild(p); 
+    p = document.createElement('p'); 
+    p.textContent = `Health: ${fox.health.toFixed(2)}`; 
+    container.appendChild(p); 
+    p = document.createElement('p'); 
+    p.textContent = `Hunger: ${fox.hunger.toFixed(2)}`; 
+    container.appendChild(p); 
+    p = document.createElement('p'); 
+    p.textContent = `Happiness: ${fox.happiness.toFixed(2)}`; 
+    container.appendChild(p); 
+    p = document.createElement('p'); 
+    p.textContent = `Poops: ${Math.floor(fox.dirty)}`; 
+    container.appendChild(p); 
   }); 
 }
 
@@ -223,6 +250,54 @@ const foxPet = function() {
       snapId: snapId, 
       request: { 
         method: 'pet', 
+      }
+    } 
+  }); 
+}
+
+const foxHeal = function() { 
+  ethereum.request({
+    method: 'wallet_invokeSnap',
+    params: { 
+      snapId: snapId, 
+      request: { 
+        method: 'heal', 
+      }
+    } 
+  }); 
+}
+
+const foxClean = function() { 
+  ethereum.request({
+    method: 'wallet_invokeSnap',
+    params: { 
+      snapId: snapId, 
+      request: { 
+        method: 'clean', 
+      }
+    } 
+  }); 
+}
+
+const foxAsk = function() { 
+  ethereum.request({
+    method: 'wallet_invokeSnap',
+    params: { 
+      snapId: snapId, 
+      request: { 
+        method: 'ask', 
+      }
+    } 
+  }); 
+}
+
+const foxBirth = function() { 
+  ethereum.request({
+    method: 'wallet_invokeSnap',
+    params: { 
+      snapId: snapId, 
+      request: { 
+        method: 'hello', 
       }
     } 
   }); 

@@ -1,12 +1,31 @@
 import { OnRpcRequestHandler, OnCronjobHandler } from '@metamask/snaps-types';
 import { heading, panel, text } from '@metamask/snaps-ui';
 
+const answers = [
+  'Certainly',
+  'Without a doubt',
+  'Absolutely',
+  'You betcha',
+  'I think so',
+  'It is likely',
+  'Unlikely',
+  'Negative',
+  'Not looking good',
+  'Doubtful',
+  'I think not', 
+  'Not going to happen', 
+  'Unsure, ask again later...',
+  'Hard to say, ask again later...',
+  'Unclear, ask again later...',
+];
+
 const Fox = {
   birth: 0, // should be epoch time 
   age: 0, // based on epoch time too 
   health: 100.0, // range: 0 to 100
   hunger: 50.0, // range: 0 to 100
   happiness: 50.0, // range: 0 to 100
+  dirty: 0.0, // everybody poops
   name: "Fox", 
   stamp: 0, // should be epoch time 
   lastNotify: 0, // also epoch time
@@ -17,11 +36,12 @@ const foxBirth = function(name:string) {
   let myFox = Object.assign({}, Fox); 
   myFox.birth = myFox.stamp = Date.now(); 
   myFox.name = name; 
-  if(name==="Max Pain") { myFox.updateModifier = 500; }
+  if(name==="Max Pain") { myFox.updateModifier = 200; }
   return myFox; 
 }
 
 const foxUpdate = async function(fox:typeof Fox) { // pass by reference 
+  if(fox.health==0) { return; } // it's so over 
   // take a fox and update it based on how much time has elapsed 
   // then update the stamp 
   // first, get the current epoch time
@@ -30,19 +50,22 @@ const foxUpdate = async function(fox:typeof Fox) { // pass by reference
   const elapsedTime = rightNow - fox.stamp; 
   // the age of the fox should increase 
   fox.age += elapsedTime; 
+  // the dirtiness increases 
+  fox.dirty += (0.000000047 * elapsedTime * fox.updateModifier); // works out to 1 every 6 hours 
   // the fox's hunger should decrease (which is kind of counter intuitive because it's getting more hungry) by 0.00000069 each millisecond
-  fox.hunger -= (0.00000069 * elapsedTime * fox.updateModifier); 
+  fox.hunger -= (0.00000089 * elapsedTime * fox.updateModifier); // was 69
   if(fox.hunger < 0) { fox.hunger = 0.0; } // bounds check 
   // now if the hunger is under 15 then the health should start to decrease at a quicker rate 
   if(fox.hunger < 15) { 
-    fox.health -= (0.000000926 * elapsedTime * fox.updateModifier); 
+    fox.health -= (0.000001226 * elapsedTime * fox.updateModifier); // was 926
   }
   if(fox.health < 0) { fox.health = 0; } // bounds check, but also... death
 
   // might not use health, might just end the fox when hunger is 0... 
 
   let hpyMod = 1; if(fox.health < 33) { hpyMod = 3; } else if (fox.health < 66) { hpyMod = 2; }
-  fox.happiness -= (0.000000425 * hpyMod * elapsedTime  * fox.updateModifier); 
+  hpyMod += Math.floor(fox.dirty); 
+  fox.happiness -= (0.000000525 * hpyMod * elapsedTime  * fox.updateModifier); // was 425
   if(fox.happiness < 0) { fox.happiness = 0; } // bounds check, but also... wow. sad. 
   fox.stamp = rightNow; 
 }
@@ -139,6 +162,15 @@ const foxHeal = async function() {
   return fox; 
 }
 
+const foxClean = async function() { 
+  // get the fox
+  let fox = await foxCall(); 
+  fox.dirty -= 1; 
+  if(fox.dirty < 0) { fox.dirty = 0; }
+  await foxSave(fox); 
+  return fox; 
+}
+
 const periodicUpdate = async function() { // for cronjob 
   // get the fox 
   let fox = await foxCall(); 
@@ -200,6 +232,50 @@ export const onRpcRequest: OnRpcRequestHandler = async ({ origin, request }) => 
       return await foxPet(); 
     case 'heal': 
       return await foxHeal(); 
+    case 'clean': 
+      return await foxClean(); 
+    case 'speak': 
+      break; 
+    case 'ask': 
+      // get the fox 
+      let fox = await foxCall(); 
+      let query = await snap.request({
+        method: 'snap_dialog',
+        params: {
+          type: 'prompt',
+          content: panel([
+            heading('Ask your pet 🦊 a question!'),
+            text(`Enter your question below and ${fox.name} will answer it:`),
+          ]),
+        },
+      });
+      query = query && typeof query == 'string' ? query.trim() : ''; 
+      if(query.length > 0) { 
+        const prediction = answers[Math.floor(Math.random() * answers.length)];
+        return snap.request({
+          method: 'snap_dialog',
+          params: {
+            type: 'alert',  
+            content: panel([
+              heading('Here is your prediction'), 
+              text(`_You asked:_ ${query}`), 
+              text(`🦊💬 ${prediction}`),
+            ]), 
+          },
+        });
+      }
+      else { 
+        return snap.request({
+          method: 'snap_dialog', 
+          params: {
+            type: 'alert', 
+            content: panel([
+              heading('Sorry, please try again'), 
+              text('You must enter a ❓ in the previous prompt to get a prediction!'), 
+            ]),
+          }
+        }); 
+      }
     case 'hello':
       const input = await snap.request({
         method: 'snap_dialog',
