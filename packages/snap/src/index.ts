@@ -249,6 +249,21 @@ export const onRpcRequest: OnRpcRequestHandler = async ({ origin, request }) => 
     case 'clean': 
       return await foxClean(); 
     case 'speak': 
+      try { 
+        const message = request.params.message.trim();
+        if(message.length > 0) { 
+          return await snap.request({
+            method: 'snap_dialog', 
+            params: { 
+              type: 'alert', 
+              content: panel([
+                heading('What does the 🦊 say?'), 
+                text(`🦊💬 ${message}`), 
+              ]), 
+            }, 
+          }); 
+        }
+      } catch (error) { } 
       break; 
     case 'ask': 
       // get the fox 
