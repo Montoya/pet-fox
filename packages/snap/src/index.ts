@@ -52,6 +52,9 @@ const foxUpdate = async function(fox:typeof Fox) { // pass by reference
   fox.age += elapsedTime; 
   // the dirtiness increases 
   fox.dirty += (0.000000047 * elapsedTime * fox.updateModifier); // works out to 1 every 6 hours 
+  if(fox.dirty > 6.0) { 
+    fox.dirty = 6; // maxes at 6 
+  }
   // the fox's hunger should decrease (which is kind of counter intuitive because it's getting more hungry) by 0.00000069 each millisecond
   fox.hunger -= (0.00000089 * elapsedTime * fox.updateModifier); // was 69
   if(fox.hunger < 0) { fox.hunger = 0.0; } // bounds check 
@@ -65,7 +68,7 @@ const foxUpdate = async function(fox:typeof Fox) { // pass by reference
 
   let hpyMod = 1; if(fox.health < 33) { hpyMod = 3; } else if (fox.health < 66) { hpyMod = 2; }
   hpyMod += Math.floor(fox.dirty); 
-  fox.happiness -= (0.000000525 * hpyMod * elapsedTime  * fox.updateModifier); // was 425
+  fox.happiness -= (0.000000425 * hpyMod * elapsedTime  * fox.updateModifier); // was 425
   if(fox.happiness < 0) { fox.happiness = 0; } // bounds check, but also... wow. sad. 
   fox.stamp = rightNow; 
 }
@@ -115,6 +118,15 @@ const foxSave = async function(fox:typeof Fox) {
     params: { operation: 'update', newState: state }, 
   }); 
 }
+
+const foxCheck = async function() { 
+  let state = (await snap.request({
+    method: 'snap_manageState',
+    params: { operation: 'get' },
+  }));
+  if(state) { return true; }
+  return false; 
+}; 
 
 const foxCall = async function() { 
   let state = (await snap.request({
@@ -224,6 +236,8 @@ export const onCronjob: OnCronjobHandler = async ({ request }) => {
  */
 export const onRpcRequest: OnRpcRequestHandler = async ({ origin, request }) => {
   switch (request.method) {
+    case 'check': 
+      return await foxCheck(); 
     case 'update': 
       return await manualUpdate(); 
     case 'feed':
