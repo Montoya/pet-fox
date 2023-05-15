@@ -58,13 +58,11 @@ const foxUpdate = async function(fox:typeof Fox) { // pass by reference
   // the fox's hunger should decrease (which is kind of counter intuitive because it's getting more hungry) by 0.00000069 each millisecond
   fox.hunger -= (0.00000089 * elapsedTime * fox.updateModifier); // was 69
   if(fox.hunger < 0) { fox.hunger = 0.0; } // bounds check 
-  // now if the hunger is under 15 then the health should start to decrease at a quicker rate 
-  if(fox.hunger < 15) { 
+  // now if the hunger is under 10 then the health should start to decrease at a quicker rate 
+  if(fox.hunger < 10) { 
     fox.health -= (0.000001226 * elapsedTime * fox.updateModifier); // was 926
   }
   if(fox.health < 0) { fox.health = 0; } // bounds check, but also... death
-
-  // might not use health, might just end the fox when hunger is 0... 
 
   let hpyMod = 1; if(fox.health < 33) { hpyMod = 3; } else if (fox.health < 66) { hpyMod = 2; }
   hpyMod += Math.floor(fox.dirty); 

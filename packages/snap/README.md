@@ -1,8 +1,3 @@
-# TypeScript Example Snap
+# Pet Fox snap for MetaMask
 
-This Snap demonstrates how to develop a Snap with TypeScript.
-
-## Notes
-
-- Babel is used for transpiling TypeScript to JavaScript, so when building with the CLI,
-  `transpilationMode` must be set to `localOnly` (default) or `localAndDeps`.
+This is a game that runs inside of MetaMask using the MetaMask Snaps API. A companion dapp is used for the interactive interface. You can play it at [montoya.github.io/lil-fox/](https://montoya.github.io/lil-fox/). 
