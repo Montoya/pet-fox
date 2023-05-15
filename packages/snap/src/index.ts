@@ -149,6 +149,7 @@ const foxCall = async function() {
 const foxFeed = async function() { 
   // get the fox 
   let fox = await foxCall(); 
+  if(fox.health==0) { return fox; } // it's so over 
   fox.hunger += 40; 
   if(fox.hunger > 100) { fox.hunger = 100.0; }
   await foxSave(fox); 
@@ -158,6 +159,7 @@ const foxFeed = async function() {
 const foxPet = async function() { 
   // get the fox 
   let fox = await foxCall(); 
+  if(fox.health==0) { return fox; } // it's so over 
   fox.happiness += 20; 
   if(fox.happiness > 100) { fox.happiness = 100.0; }
   await foxSave(fox); 
@@ -167,6 +169,7 @@ const foxPet = async function() {
 const foxHeal = async function() { 
   // get the fox 
   let fox = await foxCall(); 
+  if(fox.health==0) { return fox; } // it's so over 
   if(fox.hunger >= 20) { // no medicine on an empty stomach!
     fox.health = 100.0; // make this one simple 
   }
@@ -177,6 +180,7 @@ const foxHeal = async function() {
 const foxClean = async function() { 
   // get the fox
   let fox = await foxCall(); 
+  if(fox.health==0) { return fox; } // it's so over 
   fox.dirty -= 1; 
   if(fox.dirty < 0) { fox.dirty = 0; }
   await foxSave(fox); 
@@ -186,10 +190,8 @@ const foxClean = async function() {
 const periodicUpdate = async function() { // for cronjob 
   // get the fox 
   let fox = await foxCall(); 
-  console.log(fox); 
   await foxUpdate(fox); 
   await foxNotify(fox); 
-  console.log(fox); 
   await foxSave(fox); 
 }
 
