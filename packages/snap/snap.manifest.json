@@ -7,7 +7,7 @@
     "url": "https://github.com/Montoya/pet-fox.git"
   },
   "source": {
-    "shasum": "IVrWOt9c6cnWSTWe36W27VeTeNuvN+PAHwhrXD66blA=",
+    "shasum": "FMn2M+v9we4lmSwwoYI6VDwJ78pZh0cn1FERmQoipCQ=",
     "location": {
       "npm": {
         "filePath": "dist/bundle.js",
@@ -33,7 +33,7 @@
     "snap_dialog": {},
     "endowment:rpc": {
       "dapps": true,
-      "snaps": false
+      "snaps": true
     }
   },
   "manifestVersion": "0.1"
