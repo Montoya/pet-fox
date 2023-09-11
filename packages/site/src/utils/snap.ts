@@ -1,4 +1,4 @@
-import { defaultSnapOrigin } from '../config';
+import { defaultSnapOrigin, syncSnapOrigin } from '../config';
 import { GetSnapsResponse, Snap } from '../types';
 
 /**
@@ -16,16 +16,19 @@ export const getSnaps = async (): Promise<GetSnapsResponse> => {
  * Connect a snap to MetaMask.
  *
  * @param snapId - The ID of the snap.
+ * @param syncSnapId - The ID of the IPFS sync snap.
  * @param params - The params to pass with the snap to connect.
  */
 export const connectSnap = async (
   snapId: string = defaultSnapOrigin,
+  syncSnapId: string = syncSnapOrigin,
   params: Record<'version' | string, unknown> = {},
 ) => {
   await window.ethereum.request({
     method: 'wallet_requestSnaps',
     params: {
       [snapId]: params,
+      [syncSnapId]: {},
     },
   });
 };
@@ -60,5 +63,17 @@ export const sendHello = async () => {
     params: { snapId: defaultSnapOrigin, request: { method: 'hello' } },
   });
 };
+
+export const persistFox = async () =>
+  await window.ethereum.request({
+    method: 'wallet_invokeSnap',
+    params: { snapId: defaultSnapOrigin, request: { method: 'persist' } },
+  });
+
+export const loadFox = async () =>
+  await window.ethereum.request({
+    method: 'wallet_invokeSnap',
+    params: { snapId: defaultSnapOrigin, request: { method: 'load' } },
+  });
 
 export const isLocalSnap = (snapId: string) => snapId.startsWith('local:');
