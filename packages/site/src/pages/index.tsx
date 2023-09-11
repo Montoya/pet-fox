@@ -4,6 +4,8 @@ import { MetamaskActions, MetaMaskContext } from '../hooks';
 import {
   connectSnap,
   getSnap,
+  loadFox,
+  persistFox,
   sendHello,
   shouldDisplayReconnectButton,
 } from '../utils';
@@ -13,6 +15,7 @@ import {
   ReconnectButton,
   SendHelloButton,
   Card,
+  Button,
 } from '../components';
 
 const Container = styled.div`
@@ -126,6 +129,26 @@ const Index = () => {
     }
   };
 
+  const handlePersistFox = async () => {
+    try {
+      const fox = await persistFox();
+      console.info(fox);
+    } catch (e) {
+      console.error(e);
+      dispatch({ type: MetamaskActions.SetError, payload: e });
+    }
+  };
+
+  const handleLoadFox = async () => {
+    try {
+      const fox = await loadFox();
+      console.info(fox);
+    } catch (e) {
+      console.error(e);
+      dispatch({ type: MetamaskActions.SetError, payload: e });
+    }
+  };
+
   return (
     <Container>
       <Heading>
@@ -193,6 +216,43 @@ const Index = () => {
                 onClick={handleSendHelloClick}
                 disabled={!state.installedSnap}
               />
+            ),
+          }}
+          disabled={!state.installedSnap}
+          fullWidth={
+            state.isFlask &&
+            Boolean(state.installedSnap) &&
+            !shouldDisplayReconnectButton(state.installedSnap)
+          }
+        />
+        <Card
+          content={{
+            title: 'Persist fox',
+            description: 'Persist the adopted fox on IPFS.',
+            button: (
+              <Button
+                onClick={handlePersistFox}
+                disabled={!state.installedSnap}
+              >
+                Persist fox
+              </Button>
+            ),
+          }}
+          disabled={!state.installedSnap}
+          fullWidth={
+            state.isFlask &&
+            Boolean(state.installedSnap) &&
+            !shouldDisplayReconnectButton(state.installedSnap)
+          }
+        />
+        <Card
+          content={{
+            title: 'Load fox',
+            description: 'Load the adopted fox from IPFS.',
+            button: (
+              <Button onClick={handleLoadFox} disabled={!state.installedSnap}>
+                Load fox
+              </Button>
             ),
           }}
           disabled={!state.installedSnap}

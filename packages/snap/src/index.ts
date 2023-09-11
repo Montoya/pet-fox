@@ -1,6 +1,8 @@
 import { OnRpcRequestHandler, OnCronjobHandler } from '@metamask/snaps-types';
 import { heading, panel, text } from '@metamask/snaps-ui';
 
+const IPFS_SNAP_ID = 'local:http://localhost:8081';
+
 const answers = [
   'Certainly',
   'Without a doubt',
@@ -145,6 +147,55 @@ const foxCheck = async function () {
     return true;
   }
   return false;
+};
+
+const foxPersist = async function () {
+  try {
+    const state = await snap.request({
+      method: 'snap_manageState',
+      params: { operation: 'get' },
+    });
+    try {
+      await snap.request({
+        method: 'wallet_invokeSnap',
+        params: {
+          snapId: IPFS_SNAP_ID,
+          request: {
+            method: 'set',
+            params: state,
+          },
+        },
+      });
+
+      return state;
+    } catch (error) {
+      console.error(error);
+      return "Something wrong happened! Couldn't persist the fox state.";
+    }
+  } catch (error) {
+    console.error(error);
+    return 'No fox state found.';
+  }
+};
+
+const foxLoad = async function () {
+  try {
+    const fox = await snap.request({
+      method: 'wallet_invokeSnap',
+      params: {
+        snapId: IPFS_SNAP_ID,
+        request: { method: 'get' },
+      },
+    });
+
+    if (typeof fox === 'object' && fox && 'petFox' in fox && fox.petFox) {
+      await foxSave(fox.petFox as typeof Fox);
+    }
+    return fox;
+  } catch (error) {
+    console.error(error);
+    return "Something wrong happened! Couldn't load a persisted fox state.";
+  }
 };
 
 const foxCall = async function () {
@@ -293,6 +344,10 @@ export const onRpcRequest: OnRpcRequestHandler = async ({
   switch (request.method) {
     case 'check':
       return await foxCheck();
+    case 'persist':
+      return await foxPersist();
+    case 'load':
+      return await foxLoad();
     case 'update':
       return await manualUpdate();
     case 'feed':
