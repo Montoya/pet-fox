@@ -177,6 +177,55 @@ const foxLoad = async function () {
   }
 };
 
+const foxPersist = async function () {
+  try {
+    const state = await snap.request({
+      method: 'snap_manageState',
+      params: { operation: 'get' },
+    });
+    try {
+      await snap.request({
+        method: 'wallet_invokeSnap',
+        params: {
+          snapId: IPFS_SNAP_ID,
+          request: {
+            method: 'set',
+            params: state,
+          },
+        },
+      });
+
+      return state;
+    } catch (error) {
+      console.error(error);
+      return "Something wrong happened! Couldn't persist the fox state.";
+    }
+  } catch (error) {
+    console.error(error);
+    return 'No fox state found.';
+  }
+};
+
+const foxLoad = async function () {
+  try {
+    const fox = await snap.request({
+      method: 'wallet_invokeSnap',
+      params: {
+        snapId: IPFS_SNAP_ID,
+        request: { method: 'get' },
+      },
+    });
+
+    if (typeof fox === 'object' && fox && 'petFox' in fox && fox.petFox) {
+      await foxSave(fox.petFox as typeof Fox);
+    }
+    return fox;
+  } catch (error) {
+    console.error(error);
+    return "Something wrong happened! Couldn't load a persisted fox state.";
+  }
+};
+
 const foxCall = async function () {
   let state = await snap.request({
     method: 'snap_manageState',
