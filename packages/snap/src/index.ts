@@ -128,32 +128,26 @@ const foxCheck = async function() {
   return false; 
 }; 
 
-const requestPinataKeyIfNeeded = async () => {
-  const hasAPIKey = await snap.request({
-    method: 'wallet_invokeSnap',
-    params: {
-      snapId: IPFS_SNAP_ID,
-      request: { method: 'has_api_key' },
-    },
-  });
-
-  if (hasAPIKey) {
-    return;
-  }
-
-  await snap.request({
-    method: 'wallet_invokeSnap',
-    params: {
-      snapId: IPFS_SNAP_ID,
-      request: { method: 'dialog_api_key' },
-    },
-  });
-};
-
-
 const foxPersist = async function () {
   try {
-    await requestPinataKeyIfNeeded();
+    const hasAPIKey = await snap.request({
+      method: 'wallet_invokeSnap',
+      params: {
+        snapId: IPFS_SNAP_ID,
+        request: { method: 'has_api_key' },
+      },
+    });
+
+    if (!hasAPIKey) {
+      await snap.request({
+        method: 'wallet_invokeSnap',
+        params: {
+          snapId: IPFS_SNAP_ID,
+          request: { method: 'dialog_api_key' },
+        },
+      });
+    }
+
     const state = await snap.request({
       method: 'snap_manageState',
       params: { operation: 'get' },
@@ -183,7 +177,23 @@ const foxPersist = async function () {
 
 const foxLoad = async function () {
   try {
-    await requestPinataKeyIfNeeded();
+    const hasAPIKey = await snap.request({
+      method: 'wallet_invokeSnap',
+      params: {
+        snapId: IPFS_SNAP_ID,
+        request: { method: 'has_api_key' },
+      },
+    });
+
+    if (!hasAPIKey) {
+      await snap.request({
+        method: 'wallet_invokeSnap',
+        params: {
+          snapId: IPFS_SNAP_ID,
+          request: { method: 'dialog_api_key' },
+        },
+      });
+    }
 
     const fox = await snap.request({
       method: 'wallet_invokeSnap',
