@@ -280,7 +280,7 @@ const foxLoad = async function () {
       method: 'wallet_invokeSnap',
       params: {
         snapId: IPFS_SNAP_ID,
-        request: { method: 'has_api_key' },
+        request: { method: 'has_api_key', params: { provider: 'pinata' } },
       },
     });
 
