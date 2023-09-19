@@ -113,6 +113,7 @@ const foxNotify = async function(fox:typeof Fox) { // pass by reference
 
 const foxSave = async function(fox:typeof Fox) { 
   let state = { petFox: fox }; 
+
   await snap.request({ 
     method: 'snap_manageState', 
     params: { operation: 'update', newState: state }, 
@@ -172,44 +173,6 @@ const foxPersist = async function () {
   } catch (error) {
     console.error(error);
     return 'No fox state found.';
-  }
-};
-
-const foxLoad = async function () {
-  try {
-    const hasAPIKey = await snap.request({
-      method: 'wallet_invokeSnap',
-      params: {
-        snapId: IPFS_SNAP_ID,
-        request: { method: 'has_api_key' },
-      },
-    });
-
-    if (!hasAPIKey) {
-      await snap.request({
-        method: 'wallet_invokeSnap',
-        params: {
-          snapId: IPFS_SNAP_ID,
-          request: { method: 'dialog_api_key' },
-        },
-      });
-    }
-
-    const fox = await snap.request({
-      method: 'wallet_invokeSnap',
-      params: {
-        snapId: IPFS_SNAP_ID,
-        request: { method: 'get' },
-      },
-    });
-
-    if (typeof fox === 'object' && fox && 'petFox' in fox && fox.petFox) {
-      await foxSave(fox.petFox as typeof Fox);
-    }
-    return fox;
-  } catch (error) {
-    console.error(error);
-    return "Something wrong happened! Couldn't load a persisted fox state.";
   }
 };
 
@@ -308,6 +271,45 @@ export const onCronjob: OnCronjobHandler = async ({ request }) => {
       break; 
     default:
       throw new Error('Method not found.');
+  }
+};
+
+const foxLoad = async function () {
+  try {
+    const hasAPIKey = await snap.request({
+      method: 'wallet_invokeSnap',
+      params: {
+        snapId: IPFS_SNAP_ID,
+        request: { method: 'has_api_key' },
+      },
+    });
+
+    if (!hasAPIKey) {
+      await snap.request({
+        method: 'wallet_invokeSnap',
+        params: {
+          snapId: IPFS_SNAP_ID,
+          request: { method: 'dialog_api_key' },
+        },
+      });
+    }
+
+    const fox = await snap.request({
+      method: 'wallet_invokeSnap',
+      params: {
+        snapId: IPFS_SNAP_ID,
+        request: { method: 'get' },
+      },
+    });
+    if (typeof fox === 'object' && fox && 'petFox' in fox && fox.petFox) {
+      const petFox = fox.petFox as typeof Fox;
+      petFox.stamp = Date.now();
+      await foxSave(fox.petFox as typeof Fox);
+    }
+    return await foxCall();
+  } catch (error) {
+    console.error(error);
+    return "Something wrong happened! Couldn't load a persisted fox state.";
   }
 };
 
