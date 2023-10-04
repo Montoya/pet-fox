@@ -1,15 +1,15 @@
 {
-  "name": "@metamask/template-snap-monorepo",
+  "name": "@ae-studio/pet-fox",
   "version": "0.1.0",
-  "private": true,
-  "description": "",
-  "homepage": "https://github.com/MetaMask/template-snap-monorepo#readme",
+  "private": false,
+  "description": "This repository demonstrates how to develop a snap with TypeScript. For detailed instructions, see [the MetaMask documentation](https://docs.metamask.io/guide/snaps.html#serving-a-snap-to-your-local-environment).",
+  "homepage": "https://github.com/agencyenterprise/pet-fox#readme",
   "bugs": {
-    "url": "https://github.com/MetaMask/template-snap-monorepo/issues"
+    "url": "https://github.com/agencyenterprise/pet-fox/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MetaMask/template-snap-monorepo.git"
+    "url": "git+https://github.com/agencyenterprise/pet-fox.git"
   },
   "license": "(MIT-0 OR Apache-2.0)",
   "author": "",
@@ -46,5 +46,15 @@
   "packageManager": "yarn@3.2.1",
   "engines": {
     "node": ">=16.0.0"
-  }
+  },
+  "main": ".eslintrc.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "keywords": [
+    "metamask",
+    "pet",
+    "fox",
+    "aestudio"
+  ]
 }
