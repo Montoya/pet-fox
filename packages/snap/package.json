@@ -1,6 +1,6 @@
 {
-  "name": "@ae-studio/pet-fox",
-  "version": "0.2.1",
+  "name": "pet-fox",
+  "version": "0.2.2",
   "description": "Everyone wants a pet fox",
   "repository": {
     "type": "git",
