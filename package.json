@@ -1,14 +1,14 @@
 {
-  "name": "@ae-studio/pet-fox",
-  "version": "0.2.2",
+  "name": "@metamask/template-snap-monorepo",
+  "version": "0.2.3",
   "description": "This repository demonstrates how to develop a snap with TypeScript. For detailed instructions, see [the MetaMask documentation](https://docs.metamask.io/guide/snaps.html#serving-a-snap-to-your-local-environment).",
-  "homepage": "https://github.com/agencyenterprise/pet-fox#readme",
+  "homepage": "https://github.com/MetaMask/template-snap-monorepo#readme",
   "bugs": {
-    "url": "https://github.com/agencyenterprise/pet-fox/issues"
+    "url": "https://github.com/MetaMask/template-snap-monorepo/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/agencyenterprise/pet-fox.git"
+    "url": "git+https://github.com/MetaMask/template-snap-monorepo.git"
   },
   "license": "(MIT-0 OR Apache-2.0)",
   "author": "",

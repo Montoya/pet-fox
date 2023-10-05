@@ -5,16 +5,22 @@ __metadata:
   version: 6
   cacheKey: 8
 
-"@ae-studio/pet-fox@workspace:.":
+"@ae-studio/pet-fox@workspace:packages/snap":
   version: 0.0.0-use.local
-  resolution: "@ae-studio/pet-fox@workspace:."
+  resolution: "@ae-studio/pet-fox@workspace:packages/snap"
   dependencies:
+    "@lavamoat/allow-scripts": ^2.0.3
+    "@metamask/auto-changelog": ^2.6.0
     "@metamask/eslint-config": ^10.0.0
     "@metamask/eslint-config-jest": ^10.0.0
     "@metamask/eslint-config-nodejs": ^10.0.0
     "@metamask/eslint-config-typescript": ^10.0.0
+    "@metamask/snaps-cli": ^0.32.2
+    "@metamask/snaps-types": ^0.32.2
+    "@metamask/snaps-ui": ^0.32.2
     "@typescript-eslint/eslint-plugin": ^5.33.0
     "@typescript-eslint/parser": ^5.33.0
+    buffer: ^6.0.3
     eslint: ^8.21.0
     eslint-config-prettier: ^8.1.0
     eslint-plugin-import: ^2.26.0
@@ -23,7 +29,9 @@ __metadata:
     eslint-plugin-node: ^11.1.0
     eslint-plugin-prettier: ^4.2.1
     prettier: ^2.2.1
-    prettier-plugin-packagejson: ^2.2.18
+    prettier-plugin-packagejson: ^2.2.11
+    rimraf: ^3.0.2
+    through2: ^4.0.2
     typescript: ^4.7.4
   languageName: unknown
   linkType: soft
@@ -2764,6 +2772,29 @@ __metadata:
   checksum: 3568fb79cff8283eacb6e1bd498e20191f2c7c6774675be372f5305a4b5275512d1ded2a9fb36c106a8b10c5cbf480f6a87cdacfc70baf642b9bf3094ee3aefa
   languageName: node
   linkType: hard
+
+"@metamask/template-snap-monorepo@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "@metamask/template-snap-monorepo@workspace:."
+  dependencies:
+    "@metamask/eslint-config": ^10.0.0
+    "@metamask/eslint-config-jest": ^10.0.0
+    "@metamask/eslint-config-nodejs": ^10.0.0
+    "@metamask/eslint-config-typescript": ^10.0.0
+    "@typescript-eslint/eslint-plugin": ^5.33.0
+    "@typescript-eslint/parser": ^5.33.0
+    eslint: ^8.21.0
+    eslint-config-prettier: ^8.1.0
+    eslint-plugin-import: ^2.26.0
+    eslint-plugin-jest: ^26.8.2
+    eslint-plugin-jsdoc: ^39.2.9
+    eslint-plugin-node: ^11.1.0
+    eslint-plugin-prettier: ^4.2.1
+    prettier: ^2.2.1
+    prettier-plugin-packagejson: ^2.2.18
+    typescript: ^4.7.4
+  languageName: unknown
+  linkType: soft
 
 "@metamask/types@npm:^1.1.0":
   version: 1.1.0
@@ -13438,37 +13469,6 @@ __metadata:
   checksum: 534e641aa8f7cba160f0afec0599b6cecefbb516a2e837b512be0adbe6c1da5550e89c78059c7fabc5c9ffdf6627edabe23eb7c518c4500067a898fa65c2b550
   languageName: node
   linkType: hard
-
-"pet-fox@workspace:packages/snap":
-  version: 0.0.0-use.local
-  resolution: "pet-fox@workspace:packages/snap"
-  dependencies:
-    "@lavamoat/allow-scripts": ^2.0.3
-    "@metamask/auto-changelog": ^2.6.0
-    "@metamask/eslint-config": ^10.0.0
-    "@metamask/eslint-config-jest": ^10.0.0
-    "@metamask/eslint-config-nodejs": ^10.0.0
-    "@metamask/eslint-config-typescript": ^10.0.0
-    "@metamask/snaps-cli": ^0.32.2
-    "@metamask/snaps-types": ^0.32.2
-    "@metamask/snaps-ui": ^0.32.2
-    "@typescript-eslint/eslint-plugin": ^5.33.0
-    "@typescript-eslint/parser": ^5.33.0
-    buffer: ^6.0.3
-    eslint: ^8.21.0
-    eslint-config-prettier: ^8.1.0
-    eslint-plugin-import: ^2.26.0
-    eslint-plugin-jest: ^26.8.2
-    eslint-plugin-jsdoc: ^39.2.9
-    eslint-plugin-node: ^11.1.0
-    eslint-plugin-prettier: ^4.2.1
-    prettier: ^2.2.1
-    prettier-plugin-packagejson: ^2.2.11
-    rimraf: ^3.0.2
-    through2: ^4.0.2
-    typescript: ^4.7.4
-  languageName: unknown
-  linkType: soft
 
 "physical-cpu-count@npm:^2.0.0":
   version: 2.0.0
