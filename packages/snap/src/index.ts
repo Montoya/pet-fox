@@ -34,6 +34,7 @@ const Fox = {
   stamp: 0, // should be epoch time
   lastNotify: 0, // also epoch time
   updateModifier: 1,
+  skin: 'default', // skin associated with the pet fox
 };
 
 const foxBirth = function (name: string) {
@@ -274,6 +275,14 @@ const foxClean = async function () {
   return fox;
 };
 
+const foxSkin = async function (skin: string) {
+  // get the fox
+  const fox = await foxCall();
+  fox.skin = skin;
+  await foxSave(fox);
+  return fox;
+};
+
 const periodicUpdate = async function () {
   // for cronjob
   // get the fox
@@ -398,6 +407,8 @@ export const onRpcRequest: OnRpcRequestHandler = async ({
       return await foxHeal();
     case 'clean':
       return await foxClean();
+    case 'skin':
+      return await foxSkin(request.params.skin);
     case 'speak':
       try {
         const message = request.params.message.trim();
