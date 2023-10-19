@@ -372,7 +372,7 @@ const foxLoad = async function () {
     return await foxCall();
   } catch (error) {
     console.error(error);
-    return `Something wrong happened! Couldn't load a persisted fox state. ${error}`;
+    return `Something wrong happened! Couldn't load a persisted fox state. ${JSON.stringify(error)}`;
   }
 };
 
