@@ -372,8 +372,100 @@ const foxLoad = async function () {
     return await foxCall();
   } catch (error) {
     console.error(error);
-    return "Something wrong happened! Couldn't load a persisted fox state.";
+    return `Something wrong happened! Couldn't load a persisted fox state. ${error}`;
   }
+};
+
+const foxSpeak = async (message: string) => {
+  if (message.length > 0) {
+    return '';
+  }
+
+  try {
+    return await snap.request({
+      method: 'snap_dialog',
+      params: {
+        type: 'alert',
+        content: panel([
+          heading('What does the 🦊 say?'),
+          text(`🦊💬 ${message}`),
+        ]),
+      },
+    });
+  } catch (error) {
+    return error;
+  }
+};
+
+const foxAsk = async () => {
+  // get the fox
+  const fox = await foxCall();
+  let query = await snap.request({
+    method: 'snap_dialog',
+    params: {
+      type: 'prompt',
+      content: panel([
+        heading('Ask your pet 🦊 a question!'),
+        text(`Enter your question below and ${fox.name} will answer it:`),
+      ]),
+    },
+  });
+  query = query && typeof query === 'string' ? query.trim() : '';
+  if (query.length > 0) {
+    const prediction = answers[Math.floor(Math.random() * answers.length)];
+    return snap.request({
+      method: 'snap_dialog',
+      params: {
+        type: 'alert',
+        content: panel([
+          heading('Here is your prediction'),
+          text(`_You asked:_ ${query}`),
+          text(`🦊💬 ${prediction}`),
+        ]),
+      },
+    });
+  }
+
+  return snap.request({
+    method: 'snap_dialog',
+    params: {
+      type: 'alert',
+      content: panel([
+        heading('Sorry, please try again'),
+        text('You must enter a ❓ in the previous prompt to get a prediction!'),
+      ]),
+    },
+  });
+};
+
+const foxHello = async () => {
+  const input = await snap.request({
+    method: 'snap_dialog',
+    params: {
+      type: 'prompt',
+      content: panel([
+        heading('Would you like to adopt a pet 🦊?'),
+        text('Give your pet a name:'),
+      ]),
+    },
+  });
+  const name = input && typeof input === 'string' ? input.trim() : 'Fox';
+  const myFox = foxBirth(name);
+  foxSave(myFox);
+  const birthdate = humanReadableDate(myFox.birth);
+  return snap.request({
+    method: 'snap_dialog',
+    params: {
+      type: 'alert',
+      content: panel([
+        heading('Say 👋 to your little friend!'),
+        text('You now have your own pet 🦊 to love and care for.'),
+        text(`🦊 **Name**: ${myFox.name}`),
+        text(`📅 **Born**: ${birthdate}`),
+        text('Make sure to feed it and show it plenty of 💙!'),
+      ]),
+    },
+  });
 };
 
 /**
@@ -410,92 +502,11 @@ export const onRpcRequest: OnRpcRequestHandler = async ({
     case 'skin':
       return await foxSkin(request.params.skin);
     case 'speak':
-      try {
-        const message = request.params.message.trim();
-        if (message.length > 0) {
-          return await snap.request({
-            method: 'snap_dialog',
-            params: {
-              type: 'alert',
-              content: panel([
-                heading('What does the 🦊 say?'),
-                text(`🦊💬 ${message}`),
-              ]),
-            },
-          });
-        }
-      } catch (error) {}
-      break;
+      return await foxSpeak(request.params.message.trim());
     case 'ask':
-      // get the fox
-      const fox = await foxCall();
-      let query = await snap.request({
-        method: 'snap_dialog',
-        params: {
-          type: 'prompt',
-          content: panel([
-            heading('Ask your pet 🦊 a question!'),
-            text(`Enter your question below and ${fox.name} will answer it:`),
-          ]),
-        },
-      });
-      query = query && typeof query === 'string' ? query.trim() : '';
-      if (query.length > 0) {
-        const prediction = answers[Math.floor(Math.random() * answers.length)];
-        return snap.request({
-          method: 'snap_dialog',
-          params: {
-            type: 'alert',
-            content: panel([
-              heading('Here is your prediction'),
-              text(`_You asked:_ ${query}`),
-              text(`🦊💬 ${prediction}`),
-            ]),
-          },
-        });
-      }
-
-      return snap.request({
-        method: 'snap_dialog',
-        params: {
-          type: 'alert',
-          content: panel([
-            heading('Sorry, please try again'),
-            text(
-              'You must enter a ❓ in the previous prompt to get a prediction!',
-            ),
-          ]),
-        },
-      });
-
+      return await foxAsk();
     case 'hello':
-      const input = await snap.request({
-        method: 'snap_dialog',
-        params: {
-          type: 'prompt',
-          content: panel([
-            heading('Would you like to adopt a pet 🦊?'),
-            text('Give your pet a name:'),
-          ]),
-        },
-      });
-      const name = input && typeof input === 'string' ? input.trim() : 'Fox';
-      const myFox = foxBirth(name);
-      foxSave(myFox);
-      const birthdate = humanReadableDate(myFox.birth);
-      return snap.request({
-        method: 'snap_dialog',
-        params: {
-          type: 'alert',
-          content: panel([
-            heading('Say 👋 to your little friend!'),
-            text('You now have your own pet 🦊 to love and care for.'),
-            text(`🦊 **Name**: ${myFox.name}`),
-            text(`📅 **Born**: ${birthdate}`),
-            text('Make sure to feed it and show it plenty of 💙!'),
-          ]),
-        },
-      });
+      return await foxHello();
     default:
       throw new Error('Method not found.');
   }
