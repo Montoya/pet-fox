@@ -290,7 +290,6 @@ async function getAccounts() {
 
 const foxSkin = async function (skinNftId: number, skin: string) {
   try {
-    console.log("CALLING :::::::::: foxSkin()", { skinNftId, skin })
     if (skin !== "default") {
       const accounts: string[] = await getAccounts();
       const provider = new ethers.providers.Web3Provider(ethereum);
