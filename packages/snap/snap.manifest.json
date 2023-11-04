@@ -7,7 +7,7 @@
     "url": "https://github.com/agencyenterprise/pet-fox.git"
   },
   "source": {
-    "shasum": "oZfEZed/7XpqbCTpZ+E6IhFofuTcW5gCvGtnbWnjCCk=",
+    "shasum": "uvM4yykzCTXBv9CBClptZDYO2OQnM3msajaZMGwpEt0=",
     "location": {
       "npm": {
         "filePath": "dist/bundle.js",
@@ -18,6 +18,7 @@
     }
   },
   "initialPermissions": {
+    "endowment:ethereum-provider": {},
     "endowment:cronjob": {
       "jobs": [
         {

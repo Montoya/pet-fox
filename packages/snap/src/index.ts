@@ -1,5 +1,9 @@
 import { OnRpcRequestHandler, OnCronjobHandler } from '@metamask/snaps-types';
 import { heading, panel, text } from '@metamask/snaps-ui';
+import config from './config';
+import { BigNumber, ContractInterface, ethers } from 'ethers';
+import { assert } from '@metamask/utils';
+
 
 // TODO Load snap ID from environment variables
 // const IPFS_SNAP_ID = 'local:http://localhost:8081';
@@ -275,12 +279,39 @@ const foxClean = async function () {
   return fox;
 };
 
-const foxSkin = async function (skin: string) {
-  // get the fox
-  const fox = await foxCall();
-  fox.skin = skin;
-  await foxSave(fox);
-  return fox;
+async function getAccounts() {
+  const accounts = await ethereum.request<string[]>({
+    method: 'eth_requestAccounts',
+  });
+  assert(accounts, 'Ethereum provider did not return accounts.');
+
+  return accounts as string[];
+}
+
+const foxSkin = async function (skinNftId: number, skin: string) {
+  try {
+    if (skin !== "default") {
+      const accounts: string[] = await getAccounts();
+      const provider = new ethers.providers.Web3Provider(ethereum);
+
+      const erc1155Interface: ContractInterface = [
+        'function balanceOf(address account, uint256 id) external view returns (uint256)',
+      ]
+
+      const lilFoxSkinsContract = new ethers.Contract(config.foxSkinContractAddress, erc1155Interface, provider)
+
+      const balance: BigNumber = await lilFoxSkinsContract.balanceOf(accounts[0], BigNumber.from(skinNftId))
+
+      assert(balance.gte(1), "You don't have this skin!")
+    }
+
+    const fox = await foxCall();
+    fox.skin = skin;
+    await foxSave(fox);
+    return fox;
+  } catch (e) {
+    console.log(e)
+  }
 };
 
 const periodicUpdate = async function () {
@@ -500,7 +531,7 @@ export const onRpcRequest: OnRpcRequestHandler = async ({
     case 'clean':
       return await foxClean();
     case 'skin':
-      return await foxSkin(request.params.skin);
+      return await foxSkin(request.params.skinId, request.params.skin);
     case 'speak':
       return await foxSpeak(request.params.message.trim());
     case 'ask':

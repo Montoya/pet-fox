@@ -55,5 +55,8 @@
     "pet",
     "fox",
     "aestudio"
-  ]
+  ],
+  "dependencies": {
+    "ethers": "5.7.2"
+  }
 }
