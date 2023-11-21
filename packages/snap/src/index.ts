@@ -28,6 +28,7 @@ const answers = [
 ];
 
 const Fox = {
+  ownerAddress: "",
   birth: 0, // should be epoch time
   age: 0, // based on epoch time too
   health: 100.0, // range: 0 to 100
@@ -138,7 +139,7 @@ const foxNotify = async function (fox: typeof Fox) {
 };
 
 const foxSave = async function (fox: typeof Fox) {
-  const state = { petFox: fox };
+  const state = fox;
 
   await snap.request({
     method: 'snap_manageState',
@@ -157,7 +158,7 @@ const foxCheck = async function () {
   return false;
 };
 
-const foxPersist = async function () {
+const foxPersist = async function (ownerAddress: string) {
   try {
     const hasAPIKey = await snap.request({
       method: 'wallet_invokeSnap',
@@ -182,13 +183,18 @@ const foxPersist = async function () {
       params: { operation: 'get' },
     });
     try {
+      const fox = {
+        ...state,
+        ownerAddress
+      }
+
       await snap.request({
         method: 'wallet_invokeSnap',
         params: {
           snapId: IPFS_SNAP_ID,
           request: {
             method: 'set',
-            params: state,
+            params: [fox],
           },
         },
       });
@@ -211,7 +217,7 @@ const foxCall = async function () {
   });
 
   if (!state) {
-    state = { petFox: foxBirth('Fox') };
+    state = foxBirth('Fox');
     // initialize state if empty and set default data
     await snap.request({
       method: 'snap_manageState',
@@ -219,7 +225,7 @@ const foxCall = async function () {
     });
   }
 
-  return state.petFox as typeof Fox;
+  return state as typeof Fox;
 };
 
 const foxFeed = async function () {
@@ -368,7 +374,7 @@ export const onCronjob: OnCronjobHandler = async ({ request }) => {
   }
 };
 
-const foxLoad = async function () {
+const foxLoad = async function (ownerAddress: string) {
   try {
     const hasAPIKey = await snap.request({
       method: 'wallet_invokeSnap',
@@ -388,14 +394,21 @@ const foxLoad = async function () {
       });
     }
 
-    const fox = await snap.request({
+    const foxes: any = await snap.request({
       method: 'wallet_invokeSnap',
       params: {
         snapId: IPFS_SNAP_ID,
         request: { method: 'get' },
       },
     });
-    if (typeof fox === 'object' && fox && 'petFox' in fox && fox.petFox) {
+
+    console.log({foxes})
+    const fox = foxes.find((fox: typeof Fox) => fox.ownerAddress === ownerAddress)
+
+
+
+    console.log({ fox })
+    if (typeof fox === 'object' && fox /* && 'petFox' in fox && fox.petFox*/) {
       const petFox = fox.petFox as typeof Fox;
       petFox.stamp = Date.now();
       await foxSave(fox.petFox as typeof Fox);
@@ -517,9 +530,9 @@ export const onRpcRequest: OnRpcRequestHandler = async ({
     case 'check':
       return await foxCheck();
     case 'persist':
-      return await foxPersist();
+      return await foxPersist(request.params.ownerAddress);
     case 'load':
-      return await foxLoad();
+      return await foxLoad(request.params.ownerAddress);
     case 'update':
       return await manualUpdate();
     case 'feed':
