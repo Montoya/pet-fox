@@ -402,16 +402,12 @@ const foxLoad = async function (ownerAddress: string) {
       },
     });
 
-    console.log({foxes})
-    const fox = foxes.find((fox: typeof Fox) => fox.ownerAddress === ownerAddress)
+    const fox = foxes.find((fox: typeof Fox) => fox.ownerAddress.toLowerCase() === ownerAddress.toLowerCase())
 
-
-
-    console.log({ fox })
     if (typeof fox === 'object' && fox /* && 'petFox' in fox && fox.petFox*/) {
-      const petFox = fox.petFox as typeof Fox;
+      const petFox = fox as typeof Fox;
       petFox.stamp = Date.now();
-      await foxSave(fox.petFox as typeof Fox);
+      await foxSave(fox as typeof Fox);
     }
     return await foxCall();
   } catch (error) {
