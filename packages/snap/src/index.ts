@@ -147,15 +147,46 @@ const foxSave = async function (fox: typeof Fox) {
   });
 };
 
-const foxCheck = async function () {
-  const state = await snap.request({
-    method: 'snap_manageState',
-    params: { operation: 'get' },
-  });
-  if (state) {
-    return true;
+const foxCheck = async function (ownerAddress: string) {
+  try {
+    const hasAPIKey = await snap.request({
+      method: 'wallet_invokeSnap',
+      params: {
+        snapId: IPFS_SNAP_ID,
+        request: { method: 'has_api_key' },
+      },
+    });
+
+    if (!hasAPIKey) {
+      await snap.request({
+        method: 'wallet_invokeSnap',
+        params: {
+          snapId: IPFS_SNAP_ID,
+          request: { method: 'dialog_api_key' },
+        },
+      });
+    }
+
+    const foxes: any = await snap.request({
+      method: 'wallet_invokeSnap',
+      params: {
+        snapId: IPFS_SNAP_ID,
+        request: { method: 'get' },
+      },
+    });
+
+    if (!foxes) 
+      return false
+
+    const fox = foxes.find((fox: typeof Fox) => fox.ownerAddress.toLowerCase() === ownerAddress.toLowerCase())
+
+    if (fox)
+      return true
+    return false
+  } catch (error) {
+    console.error(error);
+    return `Something wrong happened! Couldn't load a persisted fox state. ${JSON.stringify(error)}`;
   }
-  return false;
 };
 
 const foxPersist = async function (ownerAddress: string) {
@@ -524,7 +555,7 @@ export const onRpcRequest: OnRpcRequestHandler = async ({
 }) => {
   switch (request.method) {
     case 'check':
-      return await foxCheck();
+      return await foxCheck(request.params.ownerAddress);
     case 'persist':
       return await foxPersist(request.params.ownerAddress);
     case 'load':
