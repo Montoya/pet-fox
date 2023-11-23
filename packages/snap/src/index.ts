@@ -219,13 +219,29 @@ const foxPersist = async function (ownerAddress: string) {
         ownerAddress
       }
 
+      const foxes: any = await snap.request({
+        method: 'wallet_invokeSnap',
+        params: {
+          snapId: IPFS_SNAP_ID,
+          request: { method: 'get' },
+        },
+      });
+      
+      let updatedFoxes
+      if (!foxes) {
+        updatedFoxes = [fox]
+      } else {
+        updatedFoxes = foxes.filter((fox: typeof Fox) => fox.ownerAddress.toLowerCase() !== ownerAddress.toLowerCase())
+        updatedFoxes.push(fox)
+      }
+
       await snap.request({
         method: 'wallet_invokeSnap',
         params: {
           snapId: IPFS_SNAP_ID,
           request: {
             method: 'set',
-            params: [fox],
+            params: updatedFoxes,
           },
         },
       });
