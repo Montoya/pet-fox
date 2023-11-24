@@ -1,5 +1,5 @@
 {
-  "version": "0.2.8",
+  "version": "0.3.8",
   "description": "Everyone wants a pet fox.",
   "proposedName": "Pet Fox",
   "repository": {
@@ -7,7 +7,7 @@
     "url": "https://github.com/agencyenterprise/pet-fox.git"
   },
   "source": {
-    "shasum": "juq4gwg7rg6N0Jz+skba060CPGxYmQDA4YPlIdTip68=",
+    "shasum": "tyT9AI6tgBn/k+R6bfsq0iSImVU9Cl1eqb8CpsEbnVQ=",
     "location": {
       "npm": {
         "filePath": "dist/bundle.js",
