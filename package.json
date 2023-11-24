@@ -1,8 +1,7 @@
 {
   "name": "@metamask/template-snap-monorepo",
-  "version": "0.1.0",
-  "private": true,
-  "description": "",
+  "version": "0.2.3",
+  "description": "This repository demonstrates how to develop a snap with TypeScript. For detailed instructions, see [the MetaMask documentation](https://docs.metamask.io/guide/snaps.html#serving-a-snap-to-your-local-environment).",
   "homepage": "https://github.com/MetaMask/template-snap-monorepo#readme",
   "bugs": {
     "url": "https://github.com/MetaMask/template-snap-monorepo/issues"
@@ -46,5 +45,18 @@
   "packageManager": "yarn@3.2.1",
   "engines": {
     "node": ">=16.0.0"
+  },
+  "main": ".eslintrc.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "keywords": [
+    "metamask",
+    "pet",
+    "fox",
+    "aestudio"
+  ],
+  "dependencies": {
+    "ethers": "5.7.2"
   }
 }

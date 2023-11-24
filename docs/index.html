@@ -130,13 +130,13 @@ a.btn {
 
 const { compareVersions, compare, satisfies, validate } = window.compareVersions; 
 
-var snapId = 'npm:pet-fox'; 
+var snapId = 'npm:@ae-studio/pet-fox'; 
 var snapVersion = '^0'; 
 if ( ["localhost", "127.0.0.1", ""].includes(window.location.hostname) ) {
   snapId = 'local:http://localhost:8080';
 }
 else { 
-  snapVersion = '^0.2.0'; 
+  snapVersion = '^0.3.8'; 
 }
 
 const isFlask = async () => {

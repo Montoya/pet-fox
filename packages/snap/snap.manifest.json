@@ -1,23 +1,24 @@
 {
-  "version": "0.2.0",
+  "version": "0.3.8",
   "description": "Everyone wants a pet fox.",
   "proposedName": "Pet Fox",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Montoya/pet-fox.git"
+    "url": "https://github.com/agencyenterprise/pet-fox.git"
   },
   "source": {
-    "shasum": "IVrWOt9c6cnWSTWe36W27VeTeNuvN+PAHwhrXD66blA=",
+    "shasum": "tyT9AI6tgBn/k+R6bfsq0iSImVU9Cl1eqb8CpsEbnVQ=",
     "location": {
       "npm": {
         "filePath": "dist/bundle.js",
         "iconPath": "images/icon.svg",
-        "packageName": "pet-fox",
+        "packageName": "@ae-studio/pet-fox",
         "registry": "https://registry.npmjs.org/"
       }
     }
   },
   "initialPermissions": {
+    "endowment:ethereum-provider": {},
     "endowment:cronjob": {
       "jobs": [
         {
@@ -33,7 +34,10 @@
     "snap_dialog": {},
     "endowment:rpc": {
       "dapps": true,
-      "snaps": false
+      "snaps": true
+    },
+    "wallet_snap": {
+      "npm:@ae-studio/snapsync": {}
     }
   },
   "manifestVersion": "0.1"
