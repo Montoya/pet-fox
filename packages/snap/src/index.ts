@@ -113,14 +113,14 @@ const foxSave = async function(fox:typeof Fox) {
   let state = { petFox: fox }; 
   await snap.request({ 
     method: 'snap_manageState', 
-    params: { operation: 'update', newState: state }, 
+    params: { operation: 'update', newState: state, encrypted: false }, 
   }); 
 }
 
 const foxCheck = async function() { 
   let state = (await snap.request({
     method: 'snap_manageState',
-    params: { operation: 'get' },
+    params: { operation: 'get', encrypted: false },
   }));
   if(state) { return true; }
   return false; 
@@ -129,7 +129,7 @@ const foxCheck = async function() {
 const foxCall = async function() { 
   let state = (await snap.request({
     method: 'snap_manageState',
-    params: { operation: 'get' },
+    params: { operation: 'get', encrypted: false },
   }));
 
   if (!state) {
@@ -137,7 +137,7 @@ const foxCall = async function() {
     // initialize state if empty and set default data
     await snap.request({
       method: 'snap_manageState',
-      params: { operation: 'update', newState: state },
+      params: { operation: 'update', newState: state, encrypted: false },
     });
   }
 
